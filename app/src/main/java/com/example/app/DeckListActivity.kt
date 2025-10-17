@@ -6,17 +6,30 @@ import androidx.appcompat.app.AppCompatActivity
 class DeckListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.deck_list_activity)
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.deck_list_activity);
+        val deckListView = findViewById<DeckListView>(R.id.deckListView)
 
-        val deckListView = findViewById<DeckListView>(R.id.deckListView);
+        val db = AppDatabase.getDatabase(this)
+        val deckDao = db.deckDao()
 
-        // get this deck list from local storage somehow ?
-        val deckList = mutableListOf(Deck("Maths", "Maths revision deck"), Deck("English", "English revision deck"));
+        // Insert sample data if the database is empty
+        if (deckDao.getAll().isEmpty()) {
+            deckDao.insertAll(
+                DeckEntity(deckName = "Maths", deckDescription = "Maths revision deck"),
+                DeckEntity(deckName = "English", deckDescription = "English revision deck"),
+                DeckEntity(deckName = "Science", deckDescription = "Science revision deck")
+            )
+        }
 
-        deckListView.setDecks(deckList);
+        val decksFromDb = deckDao.getAll()
 
+        // Map DeckEntity to the Deck data class used by the UI
+        val deckList = decksFromDb.map { deckEntity ->
+            Deck(deckEntity.id, deckEntity.deckName, deckEntity.deckDescription)
+        }
+
+        deckListView.setDecks(deckList)
     }
-
 }

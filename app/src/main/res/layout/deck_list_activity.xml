@@ -22,11 +22,12 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="16dp"
-            android:background="@drawable/image_button_border"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/account_icon"
             android:padding="4dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/user"
+            android:src="@drawable/user2"
+            app:tint="@color/app_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,6 +38,7 @@
             android:fontFamily="@font/poppins_black"
             android:text="@string/DeckListTitle"
             android:textSize="40sp"
+            android:textColor="@color/app_secondary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/accountIcon"
@@ -49,6 +51,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header" />
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
