@@ -62,11 +62,9 @@ class DeckListView @JvmOverloads constructor(
                 val newDeck = DeckEntity(deckName = name, deckDescription = description)
                 deckDao.insertAll(newDeck)
 
-                // Refresh the list
                 val updatedDecks = deckDao.getAll().map { Deck(it.id, it.deckName, it.deckDescription) }
                 setDecks(updatedDecks)
 
-                // Clear input and hide card
                 newDeckNameEditText.text.clear()
                 newDeckDescriptionEditText.text.clear()
                 addDeckCardView.visibility = View.GONE

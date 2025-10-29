@@ -14,18 +14,8 @@ class DeckListActivity : AppCompatActivity() {
         val db = AppDatabase.getDatabase(this)
         val deckDao = db.deckDao()
 
-        // Insert sample data if the database is empty
-        if (deckDao.getAll().isEmpty()) {
-            deckDao.insertAll(
-                DeckEntity(deckName = "Maths", deckDescription = "Maths revision deck"),
-                DeckEntity(deckName = "English", deckDescription = "English revision deck"),
-                DeckEntity(deckName = "Science", deckDescription = "Science revision deck")
-            )
-        }
-
         val decksFromDb = deckDao.getAll()
 
-        // Map DeckEntity to the Deck data class used by the UI
         val deckList = decksFromDb.map { deckEntity ->
             Deck(deckEntity.id, deckEntity.deckName, deckEntity.deckDescription)
         }

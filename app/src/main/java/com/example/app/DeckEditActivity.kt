@@ -1,14 +1,22 @@
 package com.example.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 
 class DeckEditActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.deck_edit_activity)
+
+        findViewById<ImageButton>(R.id.backToDeckListButton).setOnClickListener {
+            finish()
+        }
 
         val deckId = intent.getIntExtra("deckId", -1)
 
@@ -18,8 +26,8 @@ class DeckEditActivity : AppCompatActivity() {
             val deckEntity = deckDao.findById(deckId)
 
             if (deckEntity != null) {
-                findViewById<EditText>(R.id.deckName).setText(deckEntity.deckName)
-                findViewById<EditText>(R.id.deckDescription).setText(deckEntity.deckDescription)
+                findViewById<TextView>(R.id.deckTitle).text = deckEntity.deckName
+                findViewById<TextView>(R.id.deckDescription).text = deckEntity.deckDescription
             }
         }
     }

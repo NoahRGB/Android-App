@@ -7,31 +7,52 @@
     android:fitsSystemWindows="true"
     tools:context=".DeckEditActivity">
 
-    <EditText
-        android:id="@+id/deckName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="Deck Name"
-        app:layout_constraintEnd_toEndOf="parent"
+    <ImageButton
+        android:id="@+id/backToDeckListButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:contentDescription="Back arrow icon"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back_arrow"
+        app:backgroundTint="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <TextView
+        android:id="@+id/deckTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_black"
+        android:text="DECK NAME"
+        android:textColor="@color/app_secondary"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/backToDeckListButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/editDeckButton"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:contentDescription="Pencil/edit icon"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pencil"
+        app:backgroundTint="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/deckTitle"
+        app:layout_constraintStart_toEndOf="@+id/deckTitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/deckDescription"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="top"
         android:hint="Deck Description"
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deckName" />
+        app:layout_constraintStart_toEndOf="@+id/backToDeckListButton"
+        app:layout_constraintTop_toBottomOf="@+id/deckTitle"
+        app:layout_constraintWidth_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
