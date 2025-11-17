@@ -10,9 +10,13 @@ import androidx.core.content.ContextCompat
 
 class DeckEditActivity : AppCompatActivity() {
 
+    private lateinit var cardList: CardListView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.deck_edit_activity)
+
+        cardList = findViewById<CardListView>(R.id.cardListView)
 
         findViewById<ImageButton>(R.id.backToDeckListButton).setOnClickListener {
             finish()
@@ -29,6 +33,8 @@ class DeckEditActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.deckTitle).text = deckEntity.deckName
                 findViewById<TextView>(R.id.deckDescription).text = deckEntity.deckDescription
             }
+
+            cardList.setDeckId(deckId)
         }
     }
 }

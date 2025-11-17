@@ -13,6 +13,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.isVisible
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 data class Deck(var id: Int, var name: String, var description: String) {
     var cardCount: Int = 0
@@ -59,11 +62,14 @@ class DeckListView @JvmOverloads constructor(
             val description = newDeckDescriptionEditText.text.toString()
 
             if (name.isNotBlank()) {
-                val newDeck = DeckEntity(deckName = name, deckDescription = description)
-                deckDao.insertAll(newDeck)
 
-                val updatedDecks = deckDao.getAll().map { Deck(it.id, it.deckName, it.deckDescription) }
-                setDecks(updatedDecks)
+                findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                    val newDeck = DeckEntity(deckName = name, deckDescription = description)
+                    deckDao.insertAll(newDeck)
+
+                    val updatedDecks = deckDao.getAll().map { Deck(it.id, it.deckName, it.deckDescription) }
+                    setDecks(updatedDecks)
+                }
 
                 newDeckNameEditText.text.clear()
                 newDeckDescriptionEditText.text.clear()

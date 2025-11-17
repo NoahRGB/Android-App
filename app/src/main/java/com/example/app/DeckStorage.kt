@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+// database entity for storing a deck of flashcards
+// has a one-to-many relationship with CardEntity
+// ONE deck can have MANY cards
 @Entity
 data class DeckEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
@@ -17,10 +21,28 @@ data class DeckEntity(
     val deckDescription: String
 )
 
+// database entity for storing details of individual flashcards
+// has a one-to-many relationship with CardEntity
+// ONE deck can have MANY cards
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = DeckEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["deckId"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class CardEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val deckId: Int, // foreign key to DeckEntity primary key
+    val frontText: String,
+    val backText: String
+)
+
 @Dao
-interface DeckDao {
+interface DeckDao { // interactions with DeckEntity
     @Query("SELECT * FROM DeckEntity")
-    fun getAll(): List<DeckEntity>
+    suspend fun getAll(): List<DeckEntity>
 
     @Insert
     fun insertAll(vararg decks: DeckEntity)
@@ -29,9 +51,18 @@ interface DeckDao {
     fun findById(deckId: Int): DeckEntity?
 }
 
-@Database(entities = [DeckEntity::class], version = 1)
+@Dao
+interface CardDao { // interactions with CardEntity
+
+    @Query("SELECT * FROM CardEntity WHERE deckId = :deckId")
+    fun findByDeckId(deckId: Int): List<CardEntity>
+
+}
+
+@Database(entities = [DeckEntity::class, CardEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun deckDao(): DeckDao
+    abstract fun cardDao(): CardDao
 
     companion object {
         @Volatile
@@ -44,8 +75,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
-                // WARNING: This is not recommended for production apps.
-                // We're allowing main thread queries for simplicity.
                 .allowMainThreadQueries()
                 .build()
                 INSTANCE = instance

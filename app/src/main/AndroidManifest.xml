@@ -21,6 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".DeckEditActivity" />
+        <activity android:name=".AboutMeActivity" />
+        <activity android:name=".AddCardActivity" />
     </application>
 
 </manifest>

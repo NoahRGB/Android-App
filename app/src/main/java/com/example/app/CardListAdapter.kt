@@ -7,11 +7,12 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CardListAdapter(private val deckList: List<Deck>) :
+class CardListAdapter(private val cardList: List<Card>) :
     RecyclerView.Adapter<CardListAdapter.CardViewHolder>() {
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardFrontText: TextView = itemView.findViewById(R.id.frontText);
+        val cardBackText: TextView = itemView.findViewById(R.id.backText);
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
@@ -20,8 +21,9 @@ class CardListAdapter(private val deckList: List<Deck>) :
     }
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-        val deck = deckList[position];
-        holder.cardFrontText.text = deck.name;
+        val card = cardList[position];
+        holder.cardFrontText.text = card.frontText;
+        holder.
     }
 
     override fun getItemCount() = deckList.size;

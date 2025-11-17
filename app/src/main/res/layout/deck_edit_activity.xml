@@ -45,14 +45,22 @@
     <TextView
         android:id="@+id/deckDescription"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:hint="Deck Description"
         android:textSize="22sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/backToDeckListButton"
         app:layout_constraintTop_toBottomOf="@+id/deckTitle"
         app:layout_constraintWidth_percent="0.7" />
+
+    <com.example.app.CardListView
+        android:id="@+id/cardListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deckDescription"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
