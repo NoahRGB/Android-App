@@ -3,13 +3,18 @@ package com.example.app
 import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database
+import androidx.room.Delete
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Relation
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 // database entity for storing a deck of flashcards
 // has a one-to-many relationship with CardEntity
@@ -35,27 +40,54 @@ data class DeckEntity(
 data class CardEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val deckId: Int, // foreign key to DeckEntity primary key
-    val frontText: String,
-    val backText: String
+    var frontText: String,
+    var backText: String
+)
+
+data class DeckWithCards(
+    @Embedded val deck: DeckEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "deckId"
+    )
+    val cards: List<CardEntity>
 )
 
 @Dao
 interface DeckDao { // interactions with DeckEntity
     @Query("SELECT * FROM DeckEntity")
-    suspend fun getAll(): List<DeckEntity>
+    fun getAll(): Flow<List<DeckWithCards>>
 
     @Insert
     fun insertAll(vararg decks: DeckEntity)
 
     @Query("SELECT * FROM DeckEntity WHERE id = :deckId")
     fun findById(deckId: Int): DeckEntity?
+
+    @Delete
+    suspend fun delete(deck: DeckEntity)
 }
 
 @Dao
 interface CardDao { // interactions with CardEntity
 
+    @Insert
+    fun insertAll(vararg decks: CardEntity)
+
+    @Query("SELECT * FROM CardEntity")
+    fun getAll(): Flow<List<CardEntity>>
+
     @Query("SELECT * FROM CardEntity WHERE deckId = :deckId")
-    fun findByDeckId(deckId: Int): List<CardEntity>
+    fun findByDeckId(deckId: Int): Flow<List<CardEntity>>
+
+    @Query("SELECT * FROM CardEntity WHERE id = :id")
+    fun findById(id: Int): CardEntity?
+
+    @Update
+    fun update(card: CardEntity)
+
+    @Delete
+    suspend fun delete(card: CardEntity)
 
 }
 
@@ -75,6 +107,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
+                .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()
                 INSTANCE = instance

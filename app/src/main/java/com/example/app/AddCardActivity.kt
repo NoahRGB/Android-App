@@ -11,6 +11,7 @@ class AddCardActivity : AppCompatActivity() {
 
     private lateinit var deckTitle: TextView
     private lateinit var backButton: ImageButton
+    private lateinit var addCardView: AddCardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,8 +19,10 @@ class AddCardActivity : AppCompatActivity() {
 
         deckTitle = findViewById<TextView>(R.id.deckTitle)
         backButton = findViewById<ImageButton>(R.id.backToDeckEditButton)
+        addCardView = findViewById<AddCardView>(R.id.addCardView)
 
         val deckId = intent.getIntExtra("deckId", -1)
+        addCardView.deckId = deckId
 
         lifecycleScope.launch {
             // get decks from db to update the deck count

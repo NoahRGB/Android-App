@@ -21,7 +21,7 @@
         android:layout_height="60dp"
         android:layout_margin="10dp"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/account_icon"
+        android:contentDescription="add_button"
         android:padding="4dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"

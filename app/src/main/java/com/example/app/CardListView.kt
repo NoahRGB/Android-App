@@ -10,9 +10,10 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-data class Card(var id: Int, var frontText: String, var backText: String) {
+data class Card(var id: Int, var frontText: String, var backText: String, var isFrontVisible: Boolean = true) {
     var cardCount: Int = 0
 }
 
@@ -22,11 +23,29 @@ class CardListView @JvmOverloads constructor(
 
     private val recyclerView: RecyclerView
     private val addCardButton: ImageButton
+    private val db = AppDatabase.getDatabase(context)
+    private val cardDao = db.cardDao()
 
     private var deckId: Int;
 
     public fun setDeckId(newDeckId: Int) {
         deckId = newDeckId
+        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+            cardDao.findByDeckId(deckId).collect { cardsFromDb ->
+                val cardList = cardsFromDb.map { cardEntity ->
+                    Card(cardEntity.id, cardEntity.frontText, cardEntity.backText)
+                }
+                recyclerView.adapter = CardListAdapter(cardList, onDeleteClicked = { cardToDelete ->
+                    findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                        cardDao.delete(CardEntity(cardToDelete.id, deckId, cardToDelete.frontText, cardToDelete.backText))
+                    }
+                }, onEditClicked = { cardToEdit ->
+                    val intent = Intent(context, EditCardActivity::class.java)
+                    intent.putExtra("cardId", cardToEdit.id)
+                    context.startActivity(intent)
+                })
+            }
+        }
     }
 
     init {
@@ -41,20 +60,6 @@ class CardListView @JvmOverloads constructor(
             intent.putExtra("deckId", deckId)
             context.startActivity(intent, null)
         }
-
-        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
-            val db = AppDatabase.getDatabase(context)
-            val card = db.cardDao()
-
-            var cardsFromDb = card.findByDeckId(deckId)
-            val cardList = cardsFromDb.map { cardEntity ->
-                Card(cardEntity.id, cardEntity.frontText, cardEntity.backText)
-            }
-
-            recyclerView.adapter = CardListAdapter(cardList)
-
-        }
     }
 
 }
-

@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-data class Deck(var id: Int, var name: String, var description: String) {
-    var cardCount: Int = 0
+data class Deck(var id: Int, var name: String, var description: String, var cardCount: Int) {
 }
 
 class DeckListView @JvmOverloads constructor(
@@ -66,9 +66,6 @@ class DeckListView @JvmOverloads constructor(
                 findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
                     val newDeck = DeckEntity(deckName = name, deckDescription = description)
                     deckDao.insertAll(newDeck)
-
-                    val updatedDecks = deckDao.getAll().map { Deck(it.id, it.deckName, it.deckDescription) }
-                    setDecks(updatedDecks)
                 }
 
                 newDeckNameEditText.text.clear()
@@ -84,11 +81,25 @@ class DeckListView @JvmOverloads constructor(
         }
     }
 
-    fun setDecks(deckList: List<Deck>) {
-        recyclerView.adapter = DeckListAdapter(deckList) { selectedDeck ->
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+            deckDao.getAll().collect { decksWithCards ->
+                val deckList = decksWithCards.map { Deck(it.deck.id, it.deck.deckName, it.deck.deckDescription, it.cards.size) }
+                setDecks(deckList)
+            }
+        }
+    }
+
+    private fun setDecks(deckList: List<Deck>) {
+        recyclerView.adapter = DeckListAdapter(deckList, onDeckSelected = { selectedDeck ->
             val intent = Intent(context, DeckEditActivity::class.java)
             intent.putExtra("deckId", selectedDeck.id)
             startActivity(context, intent, null)
-        }
+        }, onDeleteClicked = { deckToDelete ->
+            findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                deckDao.delete(DeckEntity(deckToDelete.id, deckToDelete.name, deckToDelete.description))
+            }
+        })
     }
 }

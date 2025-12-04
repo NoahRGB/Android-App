@@ -21,21 +21,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_black"
-        android:text="DECK NAME"
+        android:text="EDIT CARD"
         android:textColor="@color/app_secondary"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/backToDeckEditButton"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.app.AddCardView
-        android:id="@+id/addCardView"
+    <include
+        android:id="@+id/flashcardView"
+        layout="@layout/flashcard_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deckTitle">
+        app:layout_constraintTop_toBottomOf="@+id/deckTitle"/>
 
-    </com.example.app.AddCardView>
+    <Button
+        android:id="@+id/saveCardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flashcardView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

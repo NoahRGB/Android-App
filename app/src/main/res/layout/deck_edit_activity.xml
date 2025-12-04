@@ -23,43 +23,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_black"
-        android:text="DECK NAME"
+        android:hint="DECK NAME"
         android:textColor="@color/app_secondary"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/backToDeckListButton"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/editDeckButton"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:contentDescription="Pencil/edit icon"
-        android:scaleType="fitCenter"
-        android:src="@drawable/pencil"
-        app:backgroundTint="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/deckTitle"
-        app:layout_constraintStart_toEndOf="@+id/deckTitle"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/deckDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:ellipsize="end"
         android:hint="Deck Description"
+        android:lines="1"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/backToDeckListButton"
-        app:layout_constraintTop_toBottomOf="@+id/deckTitle"
-        app:layout_constraintWidth_percent="0.7" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deckTitle" />
+
+    <TextView
+        android:id="@+id/deckCardCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/poppins"
+        android:text="0 cards"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deckDescription" />
 
     <com.example.app.CardListView
         android:id="@+id/cardListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deckDescription"
+        app:layout_constraintTop_toBottomOf="@+id/deckCardCount"
         app:layout_constraintVertical_bias="0.0"
         tools:layout_editor_absoluteX="0dp" />
 
