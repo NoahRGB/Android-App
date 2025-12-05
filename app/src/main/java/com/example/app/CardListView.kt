@@ -26,39 +26,42 @@ class CardListView @JvmOverloads constructor(
     private val db = AppDatabase.getDatabase(context)
     private val cardDao = db.cardDao()
 
-    private var deckId: Int;
+    private var deckId: Int = -1
 
-    public fun setDeckId(newDeckId: Int) {
+    fun setDeckId(newDeckId: Int) {
         deckId = newDeckId
-        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
-            cardDao.findByDeckId(deckId).collect { cardsFromDb ->
-                val cardList = cardsFromDb.map { cardEntity ->
-                    Card(cardEntity.id, cardEntity.frontText, cardEntity.backText)
-                }
-                recyclerView.adapter = CardListAdapter(cardList, onDeleteClicked = { cardToDelete ->
-                    findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
-                        cardDao.delete(CardEntity(cardToDelete.id, deckId, cardToDelete.frontText, cardToDelete.backText))
+        if (deckId != -1) {
+            findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                cardDao.findByDeckId(deckId).collect { cardsFromDb ->
+                    val cardList = cardsFromDb.map { cardEntity ->
+                        Card(cardEntity.id, cardEntity.frontText, cardEntity.backText)
                     }
-                }, onEditClicked = { cardToEdit ->
-                    val intent = Intent(context, EditCardActivity::class.java)
-                    intent.putExtra("cardId", cardToEdit.id)
-                    context.startActivity(intent)
-                })
+                    recyclerView.adapter = CardListAdapter(cardList, onDeleteClicked = { cardToDelete ->
+                        findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                            cardDao.delete(CardEntity(cardToDelete.id, deckId, cardToDelete.frontText, cardToDelete.backText))
+                        }
+                    }, onEditClicked = { cardToEdit ->
+                        val intent = Intent(context, EditCardActivity::class.java)
+                        intent.putExtra("cardId", cardToEdit.id)
+                        context.startActivity(intent)
+                    })
+                }
             }
         }
     }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.card_list_view, this, true)
-        deckId = 0
 
         recyclerView = findViewById(R.id.cardListRecyclerView)
         addCardButton = findViewById<ImageButton>(R.id.addCardButton)
 
         addCardButton.setOnClickListener {
-            val intent = Intent(context, AddCardActivity::class.java)
-            intent.putExtra("deckId", deckId)
-            context.startActivity(intent, null)
+            if (deckId != -1) {
+                val intent = Intent(context, AddCardActivity::class.java)
+                intent.putExtra("deckId", deckId)
+                context.startActivity(intent, null)
+            }
         }
     }
 

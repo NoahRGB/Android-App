@@ -23,6 +23,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/flip"
         app:backgroundTint="@android:color/transparent"
+        app:tint="?attr/colorOnSurface"
         app:layout_constraintBottom_toTopOf="@+id/saveNewCardButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.App">
+        android:theme="@style/Theme.App"
+        tools:targetApi="36">
         <activity
             android:name=".DeckListActivity"
             android:exported="true">
@@ -21,9 +22,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".DeckEditActivity" />
-        <activity android:name=".AboutMeActivity" />
         <activity android:name=".AddCardActivity" />
         <activity android:name=".EditCardActivity" />
+        <activity android:name=".AboutMeActivity" />
+        <activity android:name=".StudyActivity" />
     </application>
 
 </manifest>

@@ -41,7 +41,9 @@ data class CardEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val deckId: Int, // foreign key to DeckEntity primary key
     var frontText: String,
-    var backText: String
+    var backText: String,
+    var rating: String = "neutral", // can be "angry", "neutral", or "smile"
+    var lastStudiedDate: String = "01/01/1970"
 )
 
 data class DeckWithCards(
@@ -59,10 +61,13 @@ interface DeckDao { // interactions with DeckEntity
     fun getAll(): Flow<List<DeckWithCards>>
 
     @Insert
-    fun insertAll(vararg decks: DeckEntity)
+    suspend fun insertAll(vararg decks: DeckEntity)
 
     @Query("SELECT * FROM DeckEntity WHERE id = :deckId")
-    fun findById(deckId: Int): DeckEntity?
+    suspend fun findById(deckId: Int): DeckEntity?
+
+    @Query("SELECT * FROM DeckEntity WHERE id = :deckId")
+    fun getDeckWithCardsById(deckId: Int): Flow<DeckWithCards>
 
     @Delete
     suspend fun delete(deck: DeckEntity)
@@ -72,7 +77,7 @@ interface DeckDao { // interactions with DeckEntity
 interface CardDao { // interactions with CardEntity
 
     @Insert
-    fun insertAll(vararg decks: CardEntity)
+    suspend fun insertAll(vararg decks: CardEntity)
 
     @Query("SELECT * FROM CardEntity")
     fun getAll(): Flow<List<CardEntity>>
@@ -81,17 +86,17 @@ interface CardDao { // interactions with CardEntity
     fun findByDeckId(deckId: Int): Flow<List<CardEntity>>
 
     @Query("SELECT * FROM CardEntity WHERE id = :id")
-    fun findById(id: Int): CardEntity?
+    suspend fun findById(id: Int): CardEntity?
 
     @Update
-    fun update(card: CardEntity)
+    suspend fun update(card: CardEntity)
 
     @Delete
     suspend fun delete(card: CardEntity)
 
 }
 
-@Database(entities = [DeckEntity::class, CardEntity::class], version = 1)
+@Database(entities = [DeckEntity::class, CardEntity::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun deckDao(): DeckDao
     abstract fun cardDao(): CardDao
@@ -108,7 +113,6 @@ abstract class AppDatabase : RoomDatabase() {
                     "app_database"
                 )
                 .fallbackToDestructiveMigration()
-                .allowMainThreadQueries()
                 .build()
                 INSTANCE = instance
                 instance

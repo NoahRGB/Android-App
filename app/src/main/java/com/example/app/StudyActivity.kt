@@ -1,0 +1,204 @@
+package com.example.app
+
+import android.content.Context
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+class StudyActivity : AppCompatActivity() {
+
+    private lateinit var flashcardFront: EditText
+    private lateinit var flashcardBack: EditText
+    private lateinit var flipButton: ImageButton
+    private lateinit var backButton: ImageButton
+    private lateinit var deckName: TextView
+    private lateinit var angryButton: ImageButton
+    private lateinit var neutralButton: ImageButton
+    private lateinit var smileButton: ImageButton
+
+    private var cardList: MutableList<CardEntity> = mutableListOf()
+    private var isFront = true
+
+    private lateinit var db: AppDatabase
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_study)
+
+        val flashcardView = findViewById<View>(R.id.flashcardView)
+        flashcardFront = flashcardView.findViewById(R.id.flashcardFront)
+        flashcardBack = flashcardView.findViewById(R.id.flashcardBack)
+        flipButton = findViewById(R.id.flipCardButton)
+        backButton = findViewById(R.id.backButton)
+        deckName = findViewById(R.id.deckName)
+        angryButton = findViewById(R.id.angryButton)
+        neutralButton = findViewById(R.id.neutralButton)
+        smileButton = findViewById(R.id.smileButton)
+
+        flashcardFront.isFocusable = false
+        flashcardBack.isFocusable = false
+
+        AnimationUtils.setupCardFlip(flashcardFront)
+        AnimationUtils.setupCardFlip(flashcardBack)
+
+        val deckId = intent.getIntExtra("deckId", -1)
+
+        db = AppDatabase.getDatabase(this)
+
+        lifecycleScope.launch {
+            val cardDao = db.cardDao()
+            val deckDao = db.deckDao()
+
+            val deck = deckDao.findById(deckId)
+            deck?.let {
+                deckName.text = it.deckName
+            }
+
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+            val initialList = cardDao.findByDeckId(deckId).first().sortedWith(compareBy<CardEntity> {
+                when (it.rating) {
+                    "angry" -> 0
+                    "neutral" -> 1
+                    "smile" -> 2
+                    else -> 3
+                }
+            }.thenBy {
+                try {
+                    LocalDate.parse(it.lastStudiedDate, formatter)
+                } catch (e: Exception) {
+                    LocalDate.MIN
+                }
+            })
+            cardList.addAll(initialList)
+            showCard()
+        }
+
+        flipButton.setOnClickListener {
+            flipCard()
+        }
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
+        angryButton.setOnClickListener {
+            rateCard("angry")
+        }
+
+        neutralButton.setOnClickListener {
+            rateCard("neutral")
+        }
+
+        smileButton.setOnClickListener {
+            rateCard("smile")
+        }
+    }
+
+    private fun showCard() {
+        if (cardList.isNotEmpty()) {
+            val card = cardList[0]
+            flashcardFront.setText(card.frontText)
+            flashcardBack.setText(card.backText)
+
+            flashcardFront.visibility = View.VISIBLE
+            flashcardBack.visibility = View.INVISIBLE
+        } else {
+            // Handle case where deck is empty or all cards have been studied and removed
+            finish()
+        }
+    }
+
+    private fun flipCard() {
+        val (outView, inView) = if (isFront) {
+            flashcardFront to flashcardBack
+        } else {
+            flashcardBack to flashcardFront
+        }
+        AnimationUtils.flipCard(outView, inView)
+        isFront = !isFront
+    }
+
+    private fun nextCard() {
+        if (cardList.isNotEmpty()) {
+            if (!isFront) {
+                flipCard()
+            }
+
+            val studiedCard = cardList.removeAt(0)
+
+            when (studiedCard.rating) {
+                "angry" -> {
+                    val reinsertPosition = if (cardList.size >= 3) 3 else cardList.size
+                    cardList.add(reinsertPosition, studiedCard)
+                }
+                "neutral" -> {
+                    val reinsertPosition = (cardList.size / 2).coerceAtMost(cardList.size)
+                    cardList.add(reinsertPosition, studiedCard)
+                }
+                "smile" -> {
+                    cardList.add(studiedCard)
+                }
+                else -> {
+                    cardList.add(studiedCard)
+                }
+            }
+
+            isFront = true
+            showCard()
+        }
+    }
+
+    private fun rateCard(rating: String) {
+        if (cardList.isNotEmpty()) {
+            val card = cardList[0]
+            card.rating = rating
+
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+            val today = LocalDate.now()
+            val todayStr = today.format(formatter)
+            card.lastStudiedDate = todayStr
+
+            // --- Streak Logic ---
+            val prefs = getSharedPreferences("StreakInfo", Context.MODE_PRIVATE)
+            val lastStudiedDateStr = prefs.getString("lastStudiedDate", null)
+            var streakCount = prefs.getInt("streakCount", 0)
+
+            if (lastStudiedDateStr != todayStr) { // Only update streak once per day
+                if (lastStudiedDateStr != null) {
+                    val lastDate = LocalDate.parse(lastStudiedDateStr, formatter)
+
+                    if (lastDate.plusDays(1).isEqual(today)) {
+                        // Last studied yesterday, increment streak
+                        streakCount++
+                    } else {
+                        // Missed a day, reset streak
+                        streakCount = 1
+                    }
+                } else {
+                    // First time studying
+                    streakCount = 1
+                }
+
+                prefs.edit()
+                    .putInt("streakCount", streakCount)
+                    .putString("lastStudiedDate", todayStr)
+                    .apply()
+            }
+
+            lifecycleScope.launch {
+                db.cardDao().update(card)
+                nextCard()
+            }
+        }
+    }
+}

@@ -2,4 +2,11 @@
     <string name="app_name">Flashy</string>
     <string name="account_icon">Account icon</string>
     <string name="DeckListTitle">MY DECKS</string>
+    <string name="angry_icon">Angry face icon</string>
+    <string name="smile_icon">Smiling face icon</string>
+    <string name="neutral_icon">Neutral face icon</string>
+    <string name="decks_count">Decks: %d</string>
+    <string name="cards_count">Cards: %d</string>
+    <string name="streak_count">Streak: %d</string>
+    <string name="card_count_text">%d cards</string>
 </resources>

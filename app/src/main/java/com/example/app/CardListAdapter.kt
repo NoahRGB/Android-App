@@ -1,15 +1,10 @@
 package com.example.app
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class CardListAdapter(
@@ -20,12 +15,11 @@ class CardListAdapter(
     RecyclerView.Adapter<CardListAdapter.CardViewHolder>() {
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardFrontText: EditText = itemView.findViewById(R.id.flashcardFront)
-        val cardBackText: EditText = itemView.findViewById(R.id.flashcardBack)
+        val cardFrontText: TextView = itemView.findViewById(R.id.flashcardFront)
+        val cardBackText: TextView = itemView.findViewById(R.id.flashcardBack)
         val flipCardButton: ImageButton = itemView.findViewById(R.id.flipCardButton)
         val deleteCardButton: ImageButton = itemView.findViewById(R.id.deleteCardButton)
         val editCardButton: ImageButton = itemView.findViewById(R.id.editCardButton)
-        var isFlipping = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
@@ -35,8 +29,8 @@ class CardListAdapter(
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val card = cardList[position]
-        holder.cardFrontText.setText(card.frontText)
-        holder.cardBackText.setText(card.backText)
+        holder.cardFrontText.text = card.frontText
+        holder.cardBackText.text = card.backText
 
         // Set initial visibility based on the card's state
         if (card.isFrontVisible) {
@@ -47,18 +41,17 @@ class CardListAdapter(
             holder.cardBackText.visibility = View.VISIBLE
         }
 
-        // Disable editing
-        holder.cardFrontText.isEnabled = false
-        holder.cardBackText.isEnabled = false
-
-        val scale = holder.itemView.context.resources.displayMetrics.density
-        holder.cardFrontText.cameraDistance = 8000 * scale
-        holder.cardBackText.cameraDistance = 8000 * scale
+        AnimationUtils.setupCardFlip(holder.cardFrontText)
+        AnimationUtils.setupCardFlip(holder.cardBackText)
 
         holder.flipCardButton.setOnClickListener {
-            if (!holder.isFlipping) {
-                flipCard(holder, card)
+            val (outView, inView) = if (card.isFrontVisible) {
+                holder.cardFrontText to holder.cardBackText
+            } else {
+                holder.cardBackText to holder.cardFrontText
             }
+            AnimationUtils.flipCard(outView, inView)
+            card.isFrontVisible = !card.isFrontVisible
         }
 
         holder.deleteCardButton.setOnClickListener {
@@ -71,37 +64,4 @@ class CardListAdapter(
     }
 
     override fun getItemCount() = cardList.size
-
-    private fun flipCard(holder: CardViewHolder, card: Card) {
-        holder.isFlipping = true
-        val visibleView = if (card.isFrontVisible) holder.cardFrontText else holder.cardBackText
-        val invisibleView = if (card.isFrontVisible) holder.cardBackText else holder.cardFrontText
-
-        val outAnimator = ObjectAnimator.ofFloat(visibleView, "rotationY", 0f, 90f).apply {
-            duration = 250
-            interpolator = AccelerateInterpolator()
-        }
-
-        val inAnimator = ObjectAnimator.ofFloat(invisibleView, "rotationY", -90f, 0f).apply {
-            duration = 250
-            interpolator = DecelerateInterpolator()
-        }
-
-        outAnimator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                visibleView.visibility = View.GONE
-                invisibleView.visibility = View.VISIBLE
-                inAnimator.start()
-            }
-        })
-
-        inAnimator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                holder.isFlipping = false
-            }
-        })
-
-        outAnimator.start()
-        card.isFrontVisible = !card.isFrontVisible
-    }
 }

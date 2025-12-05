@@ -5,4 +5,7 @@
     <color name="app_primary">#333333</color>
     <color name="app_secondary">#C033D6</color>
     <color name="app_accent">#FCBA03</color>
+    <color name="card_background_light">#EEEEEE</color>
+    <color name="card_shadow_1_light">#F0F0F0</color>
+    <color name="card_shadow_2_light">#E0E0E0</color>
 </resources>

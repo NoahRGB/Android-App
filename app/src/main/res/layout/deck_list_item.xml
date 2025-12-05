@@ -16,7 +16,7 @@
         android:id="@+id/shadow_card_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardBackgroundColor="#E0E0E0"
+        app:cardBackgroundColor="?attr/cardShadow2Color"
         app:cardCornerRadius="15dp"
         app:cardElevation="0dp"
         android:translationX="16dp"
@@ -31,7 +31,7 @@
         android:id="@+id/shadow_card_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardBackgroundColor="#F0F0F0"
+        app:cardBackgroundColor="?attr/cardShadow1Color"
         app:cardCornerRadius="15dp"
         app:cardElevation="2dp"
         android:translationX="8dp"
@@ -46,7 +46,7 @@
         android:id="@+id/main_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?attr/cardBackgroundColor"
         app:cardCornerRadius="15dp"
         app:cardElevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -65,6 +65,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/bin"
                 app:backgroundTint="@android:color/transparent"
+                app:tint="?attr/colorOnSurface"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -77,6 +78,7 @@
                 android:text="Deck Name"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
                 app:layout_constraintEnd_toStartOf="@+id/deckCount"
                 app:layout_constraintStart_toEndOf="@+id/deleteDeckButton"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -91,6 +93,7 @@
                 android:maxLines="1"
                 android:text="######################"
                 android:textSize="16sp"
+                android:textColor="?attr/colorOnSurface"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/deckName" />
@@ -101,6 +104,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins"
                 android:text="0 cards"
+                android:textColor="?attr/colorOnSurface"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/plus3"
-        app:tint="@color/app_primary" />
+        app:tint="?attr/colorOnSurface" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/addDeckCardView"
@@ -118,6 +118,7 @@
                 android:text="Back"
                 app:backgroundTint="@android:color/transparent"
                 app:cornerRadius="10dp"
+                app:tint="?attr/colorOnSurface"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

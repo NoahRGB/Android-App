@@ -48,13 +48,7 @@ class DeckListView @JvmOverloads constructor(
         blurView = findViewById(R.id.blurView)
 
         addDeckButton.setOnClickListener {
-            if (addDeckCardView.isVisible) {
-                addDeckCardView.visibility = View.GONE
-                blurView.visibility = View.GONE
-            } else {
-                addDeckCardView.visibility = View.VISIBLE
-                blurView.visibility = View.VISIBLE
-            }
+            toggleAddDeckPopup(!addDeckCardView.isVisible)
         }
 
         saveNewDeckButton.setOnClickListener {
@@ -70,14 +64,12 @@ class DeckListView @JvmOverloads constructor(
 
                 newDeckNameEditText.text.clear()
                 newDeckDescriptionEditText.text.clear()
-                addDeckCardView.visibility = View.GONE
-                blurView.visibility = View.GONE
+                toggleAddDeckPopup(false)
             }
         }
 
         closeNewDeckPopupButton.setOnClickListener {
-            addDeckCardView.visibility = View.GONE
-            blurView.visibility = View.GONE
+            toggleAddDeckPopup(false)
         }
     }
 
@@ -101,5 +93,10 @@ class DeckListView @JvmOverloads constructor(
                 deckDao.delete(DeckEntity(deckToDelete.id, deckToDelete.name, deckToDelete.description))
             }
         })
+    }
+
+    private fun toggleAddDeckPopup(show: Boolean) {
+        addDeckCardView.visibility = if (show) View.VISIBLE else View.GONE
+        blurView.visibility = if (show) View.VISIBLE else View.GONE
     }
 }

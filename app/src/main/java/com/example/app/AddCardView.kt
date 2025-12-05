@@ -1,14 +1,8 @@
 package com.example.app
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -25,7 +19,6 @@ class AddCardView @JvmOverloads constructor(
     private var flipCardButton: ImageButton
     private var flashcardFront: EditText
     private var flashcardBack: EditText
-    private var isFlipping = false
     private var isFrontVisible = true
     private val db = AppDatabase.getDatabase(context)
     private val cardDao = db.cardDao()
@@ -51,14 +44,11 @@ class AddCardView @JvmOverloads constructor(
         flashcardBack.layoutParams = layoutParams
 
         // sets camera distance so flip is completely visible
-        val scale = resources.displayMetrics.density
-        flashcardFront.cameraDistance = 8000 * scale
-        flashcardBack.cameraDistance = 8000 * scale
+        AnimationUtils.setupCardFlip(flashcardFront)
+        AnimationUtils.setupCardFlip(flashcardBack)
 
         flipCardButton.setOnClickListener {
-            if (!isFlipping) {
-                flipCard()
-            }
+            flipCard()
         }
 
         saveNewCardButton.setOnClickListener {
@@ -83,35 +73,12 @@ class AddCardView @JvmOverloads constructor(
     }
 
     private fun flipCard() {
-        isFlipping = true
-        val visibleView = if (isFrontVisible) flashcardFront else flashcardBack
-        val invisibleView = if (isFrontVisible) flashcardBack else flashcardFront
-
-        val outAnimator = ObjectAnimator.ofFloat(visibleView, "rotationY", 0f, 90f).apply {
-            duration = 250
-            interpolator = AccelerateInterpolator()
+        val (outView, inView) = if (isFrontVisible) {
+            flashcardFront to flashcardBack
+        } else {
+            flashcardBack to flashcardFront
         }
-
-        val inAnimator = ObjectAnimator.ofFloat(invisibleView, "rotationY", -90f, 0f).apply {
-            duration = 250
-            interpolator = DecelerateInterpolator()
-        }
-
-        outAnimator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                visibleView.visibility = View.GONE
-                invisibleView.visibility = View.VISIBLE
-                inAnimator.start()
-            }
-        })
-
-        inAnimator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                isFlipping = false
-            }
-        })
-
-        outAnimator.start()
+        AnimationUtils.flipCard(outView, inView)
         isFrontVisible = !isFrontVisible
     }
 }

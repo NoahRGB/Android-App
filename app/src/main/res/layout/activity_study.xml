@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".StudyActivity">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:contentDescription="Back arrow icon"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back_arrow"
+        app:backgroundTint="@android:color/transparent"
+        app:tint="?attr/colorOnSurface"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/studySessionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_black"
+        android:text="Study Session"
+        android:textSize="34sp"
+        android:textColor="@color/app_secondary"
+        app:layout_constraintTop_toBottomOf="@+id/backButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/deckName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/studySessionTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <include
+        android:id="@+id/flashcardView"
+        layout="@layout/flashcard_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/deckName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/flipCardButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:contentDescription="Flip deck icon"
+        android:scaleType="fitCenter"
+        android:src="@drawable/flip"
+        app:backgroundTint="@android:color/transparent"
+        app:tint="?attr/colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flashcardView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ratingButtonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/flipCardButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/angryButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/angry"
+            android:contentDescription="@string/angry_icon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            app:tint="?attr/colorOnSurface"
+            app:layout_constraintEnd_toStartOf="@+id/neutralButton"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/neutralButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/neutral"
+            android:contentDescription="@string/neutral_icon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            app:tint="?attr/colorOnSurface"
+            android:layout_marginStart="32dp"
+            app:layout_constraintStart_toEndOf="@+id/angryButton"
+            app:layout_constraintEnd_toStartOf="@+id/smileButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/smileButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/smile"
+            android:contentDescription="@string/smile_icon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            app:tint="?attr/colorOnSurface"
+            android:layout_marginStart="32dp"
+            app:layout_constraintStart_toEndOf="@+id/neutralButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/back_arrow"
         app:backgroundTint="@android:color/transparent"
+        app:tint="?attr/colorOnSurface"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,9 +34,23 @@
         layout="@layout/flashcard_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deckTitle"/>
+
+    <ImageButton
+        android:id="@+id/flipCardButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:contentDescription="Flip deck icon"
+        android:scaleType="fitCenter"
+        android:src="@drawable/flip"
+        app:backgroundTint="@android:color/transparent"
+        app:tint="?attr/colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flashcardView" />
 
     <Button
         android:id="@+id/saveCardButton"
@@ -44,6 +59,6 @@
         android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/flashcardView" />
+        app:layout_constraintTop_toBottomOf="@+id/flipCardButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

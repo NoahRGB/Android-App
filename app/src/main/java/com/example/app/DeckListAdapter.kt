@@ -32,7 +32,7 @@ class DeckListAdapter(
         val deck = deckList[position]
         holder.deckNameTextView.text = deck.name
         holder.deckDescriptionTextView.text = deck.description
-        holder.cardCountTextView.text = "${deck.cardCount} cards"
+        holder.cardCountTextView.text = holder.itemView.context.getString(R.string.card_count_text, deck.cardCount)
 
         holder.selectButton.setOnClickListener {
             onDeckSelected(deck)

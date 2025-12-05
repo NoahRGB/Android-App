@@ -31,7 +31,7 @@ class AddCardActivity : AppCompatActivity() {
             val deckName = deckDao.findById(deckId)
 
             // update the deck count text
-            deckTitle.text = "${deckName?.deckName}"
+            deckTitle.text = deckName?.deckName ?: ""
         }
 
         backButton.setOnClickListener {

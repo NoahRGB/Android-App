@@ -2,6 +2,7 @@ package com.example.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,12 @@ class DeckEditActivity : AppCompatActivity() {
             finish()
         }
 
+        findViewById<Button>(R.id.studyDeckButton).setOnClickListener {
+            val intent = Intent(this, StudyActivity::class.java)
+            intent.putExtra("deckId", deckId)
+            startActivity(intent)
+        }
+
         deckId = intent.getIntExtra("deckId", -1)
         cardList.setDeckId(deckId)
     }
@@ -39,8 +46,7 @@ class DeckEditActivity : AppCompatActivity() {
             val deckDao = db.deckDao()
 
             lifecycleScope.launch {
-                val deckWithCards = deckDao.getAll().first().find { it.deck.id == deckId }
-                if (deckWithCards != null) {
+                deckDao.getDeckWithCardsById(deckId).first()?.let { deckWithCards ->
                     findViewById<TextView>(R.id.deckTitle).text = deckWithCards.deck.deckName
                     findViewById<TextView>(R.id.deckDescription).text = deckWithCards.deck.deckDescription
                     findViewById<TextView>(R.id.deckCardCount).text = "${deckWithCards.cards.size} cards"
