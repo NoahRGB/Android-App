@@ -173,19 +173,19 @@ class StudyActivity : AppCompatActivity() {
             val lastStudiedDateStr = prefs.getString("lastStudiedDate", null)
             var streakCount = prefs.getInt("streakCount", 0)
 
-            if (lastStudiedDateStr != todayStr) { // Only update streak once per day
+            if (lastStudiedDateStr != todayStr) { // only update streak once a day
                 if (lastStudiedDateStr != null) {
                     val lastDate = LocalDate.parse(lastStudiedDateStr, formatter)
 
                     if (lastDate.plusDays(1).isEqual(today)) {
-                        // Last studied yesterday, increment streak
+                        // add to streak
                         streakCount++
                     } else {
-                        // Missed a day, reset streak
+                        // reset streak
                         streakCount = 1
                     }
                 } else {
-                    // First time studying
+                    // initialise streak
                     streakCount = 1
                 }
 
