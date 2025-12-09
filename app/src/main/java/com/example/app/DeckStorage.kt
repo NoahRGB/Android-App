@@ -1,6 +1,7 @@
 package com.example.app
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -117,6 +118,14 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE = instance
                 instance
             }
+        }
+
+        @VisibleForTesting
+        fun getTestDatabase(context: Context): AppDatabase {
+            return Room.inMemoryDatabaseBuilder(
+                context,
+                AppDatabase::class.java
+            ).build()
         }
     }
 }

@@ -47,6 +47,7 @@ class DeckListView @JvmOverloads constructor(
         closeNewDeckPopupButton = findViewById(R.id.closeNewDeckPopup)
         blurView = findViewById(R.id.blurView)
 
+        // show the add deck popup
         addDeckButton.setOnClickListener {
             toggleAddDeckPopup(!addDeckCardView.isVisible)
         }
@@ -56,7 +57,7 @@ class DeckListView @JvmOverloads constructor(
             val description = newDeckDescriptionEditText.text.toString()
 
             if (name.isNotBlank()) {
-
+                // a new deck has been created, so add it to the DB in a coroutine
                 findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
                     val newDeck = DeckEntity(deckName = name, deckDescription = description)
                     deckDao.insertAll(newDeck)
@@ -64,6 +65,7 @@ class DeckListView @JvmOverloads constructor(
 
                 newDeckNameEditText.text.clear()
                 newDeckDescriptionEditText.text.clear()
+                // close the popup, reset text
                 toggleAddDeckPopup(false)
             }
         }
@@ -75,8 +77,10 @@ class DeckListView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        // when created, get all the decks from the DB and initialise the recycler view
         findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
             deckDao.getAll().collect { decksWithCards ->
+                // turn each deck entity object into a deck object
                 val deckList = decksWithCards.map { Deck(it.deck.id, it.deck.deckName, it.deck.deckDescription, it.cards.size) }
                 setDecks(deckList)
             }
@@ -84,6 +88,9 @@ class DeckListView @JvmOverloads constructor(
     }
 
     private fun setDecks(deckList: List<Deck>) {
+        // initialise the adapter so it can display the recycler view that contains
+        // all the decks
+        // define the delete behaviour
         recyclerView.adapter = DeckListAdapter(deckList, onDeckSelected = { selectedDeck ->
             val intent = Intent(context, DeckEditActivity::class.java)
             intent.putExtra("deckId", selectedDeck.id)
@@ -96,6 +103,7 @@ class DeckListView @JvmOverloads constructor(
     }
 
     private fun toggleAddDeckPopup(show: Boolean) {
+        // blurs the background and brings the add deck popup into view
         addDeckCardView.visibility = if (show) View.VISIBLE else View.GONE
         blurView.visibility = if (show) View.VISIBLE else View.GONE
     }

@@ -21,6 +21,7 @@ class AddCardActivity : AppCompatActivity() {
         backButton = findViewById<ImageButton>(R.id.backToDeckEditButton)
         addCardView = findViewById<AddCardView>(R.id.addCardView)
 
+        // get the deck id from the intent
         val deckId = intent.getIntExtra("deckId", -1)
         addCardView.deckId = deckId
 

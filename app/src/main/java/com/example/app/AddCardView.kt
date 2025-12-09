@@ -31,14 +31,14 @@ class AddCardView @JvmOverloads constructor(
         flashcardFront = findViewById<EditText>(R.id.flashcardFront)
         flashcardBack = findViewById<EditText>(R.id.flashcardBack)
 
+        // gather various screen based metrics/values
+        // that are used in the flip animation
         val density = resources.displayMetrics.density
         val heightInDp = 300
         val heightInPixels = (heightInDp * density).toInt()
-
         var layoutParams = flashcardFront.layoutParams
         layoutParams.height = heightInPixels
         flashcardFront.layoutParams = layoutParams
-
         layoutParams = flashcardBack.layoutParams
         layoutParams.height = heightInPixels
         flashcardBack.layoutParams = layoutParams
@@ -56,15 +56,15 @@ class AddCardView @JvmOverloads constructor(
             val backText = flashcardBack.text.toString()
 
             if (frontText.isNotBlank() && backText.isNotBlank()) {
+                // launch coroutine, insert new card into DB
                 findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
                     val newCard = CardEntity(deckId=deckId, frontText=frontText, backText=backText)
                     cardDao.insertAll(newCard)
                 }
-                // Clear the text fields
+                // clear text and flip so another flashcard
+                // can be added
                 flashcardFront.text.clear()
                 flashcardBack.text.clear()
-
-                // If the back is visible, flip back to the front
                 if (!isFrontVisible) {
                     flipCard()
                 }

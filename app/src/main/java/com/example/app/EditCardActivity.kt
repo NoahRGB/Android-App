@@ -28,16 +28,15 @@ class EditCardActivity : AppCompatActivity() {
         saveButton = findViewById(R.id.saveCardButton)
         flipButton = findViewById(R.id.flipCardButton)
 
-        // Get a reference to the included flashcardView
+        // get a reference to the included flashcardView
         val flashcardView = findViewById<View>(R.id.flashcardView)
 
         flashcardFront = flashcardView.findViewById(R.id.flashcardFront)
         flashcardBack = flashcardView.findViewById(R.id.flashcardBack)
 
-        // Set initial visibility
+        // set initial visibility
         flashcardFront.visibility = View.VISIBLE
         flashcardBack.visibility = View.INVISIBLE
-
         AnimationUtils.setupCardFlip(flashcardFront)
         AnimationUtils.setupCardFlip(flashcardBack)
 
@@ -46,6 +45,8 @@ class EditCardActivity : AppCompatActivity() {
         val db = AppDatabase.getDatabase(this)
         val cardDao = db.cardDao()
 
+        // set the current content of the flashcard
+        // (before the user edits it)
         lifecycleScope.launch {
             card = cardDao.findById(cardId)
             card?.let {
@@ -55,10 +56,11 @@ class EditCardActivity : AppCompatActivity() {
         }
 
         backButton.setOnClickListener {
-            finish()
+            finish() // go back to the card list
         }
 
         saveButton.setOnClickListener {
+            // the card has been edited, save the new version in a coroutine
             val frontText = flashcardFront.text.toString()
             val backText = flashcardBack.text.toString()
 
@@ -72,6 +74,7 @@ class EditCardActivity : AppCompatActivity() {
             }
         }
 
+        // flip the card using AnimationUtils so the back can be edited as well
         flipButton.setOnClickListener {
             val (outView, inView) = if (isFrontVisible) {
                 flashcardFront to flashcardBack

@@ -22,10 +22,11 @@ class DeckEditActivity : AppCompatActivity() {
         cardList = findViewById(R.id.cardListView)
 
         findViewById<ImageButton>(R.id.backToDeckListButton).setOnClickListener {
-            finish()
+            finish() // return back to the deck list
         }
 
         findViewById<Button>(R.id.studyDeckButton).setOnClickListener {
+            // start a 'study session'
             val intent = Intent(this, StudyActivity::class.java)
             intent.putExtra("deckId", deckId)
             startActivity(intent)
@@ -44,7 +45,7 @@ class DeckEditActivity : AppCompatActivity() {
         if (deckId != -1) {
             val db = AppDatabase.getDatabase(this)
             val deckDao = db.deckDao()
-
+            // load all the deck information from the DB in a coroutine
             lifecycleScope.launch {
                 deckDao.getDeckWithCardsById(deckId).first()?.let { deckWithCards ->
                     findViewById<TextView>(R.id.deckTitle).text = deckWithCards.deck.deckName

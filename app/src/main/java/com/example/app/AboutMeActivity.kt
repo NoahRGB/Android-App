@@ -38,7 +38,8 @@ class AboutMeActivity : AppCompatActivity() {
         deckIcon = findViewById(R.id.deck_icon)
         cardIcon = findViewById(R.id.card_icon)
 
-        // Set icons based on theme
+        // set icons based on theme
+        // (i.e. switch to icons that are visible in dark mode)
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
             deckIcon.setImageResource(R.drawable.deck_icon_dark)
@@ -65,7 +66,7 @@ class AboutMeActivity : AppCompatActivity() {
             cardCountText.text = getString(R.string.cards_count, totalCards)
         }
 
-        // --- Streak Logic ---
+        // count the user's current streak
         val streakPrefs = getSharedPreferences("StreakInfo", Context.MODE_PRIVATE)
         val lastStudiedDateStr = streakPrefs.getString("lastStudiedDate", null)
         var streakCount = streakPrefs.getInt("streakCount", 0)
@@ -84,7 +85,7 @@ class AboutMeActivity : AppCompatActivity() {
         }
         streakText.text = getString(R.string.streak_count, streakCount)
 
-        // Load saved theme preference
+        // detect if dark mode is enabled, update slider
         val sharedPrefs = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         val isDarkMode = sharedPrefs.getInt(
             "DarkMode",
@@ -92,6 +93,7 @@ class AboutMeActivity : AppCompatActivity() {
         ) == AppCompatDelegate.MODE_NIGHT_YES
         darkModeSwitch.isChecked = isDarkMode
 
+        // toggle dark mode with slider
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

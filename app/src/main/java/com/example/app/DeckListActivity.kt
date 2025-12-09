@@ -14,7 +14,7 @@ class DeckListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Apply the saved theme preference
+        // this is the entry point for the app, so apply the current theme
         val sharedPrefs = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         val nightMode = sharedPrefs.getInt("DarkMode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         AppCompatDelegate.setDefaultNightMode(nightMode)
@@ -23,6 +23,7 @@ class DeckListActivity : AppCompatActivity() {
 
         accountIcon = findViewById(R.id.accountIcon)
 
+        // launch the about me activity
         accountIcon.setOnClickListener {
             val intent = Intent(this, AboutMeActivity::class.java)
             startActivity(intent)

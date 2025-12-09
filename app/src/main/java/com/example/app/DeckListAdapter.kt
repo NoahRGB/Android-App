@@ -16,6 +16,7 @@ class DeckListAdapter(
     RecyclerView.Adapter<DeckListAdapter.DeckViewHolder>() {
 
     class DeckViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        // these are all the components that a deck item holds
         val deckNameTextView: TextView = itemView.findViewById(R.id.deckName)
         val deckDescriptionTextView: TextView = itemView.findViewById(R.id.deckDescription)
         val cardCountTextView: TextView = itemView.findViewById(R.id.deckCount)
@@ -29,6 +30,7 @@ class DeckListAdapter(
     }
 
     override fun onBindViewHolder(holder: DeckViewHolder, position: Int) {
+        // find the deck and initialise all its properties
         val deck = deckList[position]
         holder.deckNameTextView.text = deck.name
         holder.deckDescriptionTextView.text = deck.description

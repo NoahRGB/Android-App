@@ -10,11 +10,14 @@ import android.view.animation.DecelerateInterpolator
 
 object AnimationUtils {
 
+    // sets up the camera distance
+    // if this is not done then the card flip is too zoomed in
     fun setupCardFlip(view: View) {
         val scale = view.context.resources.displayMetrics.density
         view.cameraDistance = 8000 * scale
     }
 
+    // flip the card (rotate around the Y axis)
     fun flipCard(outView: View, inView: View) {
         val outAnimator = ObjectAnimator.ofFloat(outView, "rotationY", 0f, 90f).apply {
             duration = 250

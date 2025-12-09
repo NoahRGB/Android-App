@@ -30,12 +30,18 @@ class CardListView @JvmOverloads constructor(
 
     fun setDeckId(newDeckId: Int) {
         deckId = newDeckId
+
+        // as long as the deck id is valid, gather the list of cards from the DB in a coroutine
         if (deckId != -1) {
             findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
                 cardDao.findByDeckId(deckId).collect { cardsFromDb ->
+
+                    // turn each card entity object into a card object
                     val cardList = cardsFromDb.map { cardEntity ->
                         Card(cardEntity.id, cardEntity.frontText, cardEntity.backText)
                     }
+                    // initialise the adapter so the recycler view can display all the gathered cards
+                    // and define the delete/edit behaviours
                     recyclerView.adapter = CardListAdapter(cardList, onDeleteClicked = { cardToDelete ->
                         findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
                             cardDao.delete(CardEntity(cardToDelete.id, deckId, cardToDelete.frontText, cardToDelete.backText))

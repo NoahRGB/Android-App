@@ -47,7 +47,6 @@ class StudyActivity : AppCompatActivity() {
 
         flashcardFront.isFocusable = false
         flashcardBack.isFocusable = false
-
         AnimationUtils.setupCardFlip(flashcardFront)
         AnimationUtils.setupCardFlip(flashcardBack)
 
@@ -56,6 +55,7 @@ class StudyActivity : AppCompatActivity() {
         db = AppDatabase.getDatabase(this)
 
         lifecycleScope.launch {
+            // gather all cards and sort them correctly by rating and the last time they were studied
             val cardDao = db.cardDao()
             val deckDao = db.deckDao()
 
@@ -64,6 +64,7 @@ class StudyActivity : AppCompatActivity() {
                 deckName.text = it.deckName
             }
 
+            // parse the date and ratings
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
             val initialList = cardDao.findByDeckId(deckId).first().sortedWith(compareBy<CardEntity> {
                 when (it.rating) {
@@ -91,6 +92,7 @@ class StudyActivity : AppCompatActivity() {
             finish()
         }
 
+        // various types of card rating
         angryButton.setOnClickListener {
             rateCard("angry")
         }
@@ -106,6 +108,7 @@ class StudyActivity : AppCompatActivity() {
 
     private fun showCard() {
         if (cardList.isNotEmpty()) {
+            // gather the new card and show its front text
             val card = cardList[0]
             flashcardFront.setText(card.frontText)
             flashcardBack.setText(card.backText)
@@ -113,12 +116,13 @@ class StudyActivity : AppCompatActivity() {
             flashcardFront.visibility = View.VISIBLE
             flashcardBack.visibility = View.INVISIBLE
         } else {
-            // Handle case where deck is empty or all cards have been studied and removed
+            // handle case where deck is empty or all cards have been studied and removed
             finish()
         }
     }
 
     private fun flipCard() {
+        // flip to back using AnimationUtils
         val (outView, inView) = if (isFront) {
             flashcardFront to flashcardBack
         } else {
@@ -130,22 +134,28 @@ class StudyActivity : AppCompatActivity() {
 
     private fun nextCard() {
         if (cardList.isNotEmpty()) {
+            // turn the card back to the front for the next card
             if (!isFront) {
                 flipCard()
             }
 
+            // remove the card the user just studied so it can be repositioned
             val studiedCard = cardList.removeAt(0)
 
+            // reinsert the card into the list based on the size of the list and the rating it got
             when (studiedCard.rating) {
                 "angry" -> {
+                    // add it back soon since the user is not confident with it
                     val reinsertPosition = if (cardList.size >= 3) 3 else cardList.size
                     cardList.add(reinsertPosition, studiedCard)
                 }
                 "neutral" -> {
+                    // add it relatively soon since the user is not sure
                     val reinsertPosition = (cardList.size / 2).coerceAtMost(cardList.size)
                     cardList.add(reinsertPosition, studiedCard)
                 }
                 "smile" -> {
+                    // add it to the back since the user is confident with this card
                     cardList.add(studiedCard)
                 }
                 else -> {
@@ -163,12 +173,13 @@ class StudyActivity : AppCompatActivity() {
             val card = cardList[0]
             card.rating = rating
 
+            // parse the current date
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
             val today = LocalDate.now()
             val todayStr = today.format(formatter)
             card.lastStudiedDate = todayStr
 
-            // --- Streak Logic ---
+            // update the user's streak (so it can be shown in AboutMeActivity)
             val prefs = getSharedPreferences("StreakInfo", Context.MODE_PRIVATE)
             val lastStudiedDateStr = prefs.getString("lastStudiedDate", null)
             var streakCount = prefs.getInt("streakCount", 0)
@@ -189,6 +200,7 @@ class StudyActivity : AppCompatActivity() {
                     streakCount = 1
                 }
 
+                // save in the preferences
                 prefs.edit()
                     .putInt("streakCount", streakCount)
                     .putString("lastStudiedDate", todayStr)
